@@ -39,7 +39,7 @@ services:
     command: mongod --replSet rs0 --smallfiles --oplogSize 128 --auth --keyFile /opt/keyfile/mongodb-keyfile
  
   mongodb-arbiter:
-    image: mongo:4.0.9
+    image: mongo:latest
     container_name: "mongodb-arbiter"
     restart: always
     ports:
