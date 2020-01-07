@@ -2,7 +2,7 @@
 
 1. Thread ThreadLocalMap ThreadLocal 关系图
 
-   ![threadLocal](../img\threadLocal.png)
+   ![threadLocal](../img/threadLocal.png)
 
 2. ThreadLocal
 
