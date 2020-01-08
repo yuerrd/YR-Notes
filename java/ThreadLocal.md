@@ -1,10 +1,10 @@
 ## ThreadLocal源码解读
 
-1. Thread ThreadLocalMap ThreadLocal 关系图
+1. #### Thread ThreadLocalMap ThreadLocal 关系图
 
    ![threadLocal](../img/threadLocal.png)
 
-2. ThreadLocal
+2. #### ThreadLocal
 
    ThreadLocal每次初始后threadLocalHashCode增加HASH_INCREMENT
 
@@ -29,7 +29,7 @@
    }
    ```
 
-   输出结果
+   ##### 输出结果
 
    ```java
    0
@@ -38,7 +38,7 @@
    626627285
    ```
 
-   哈希算法
+   ##### 哈希算法
 
    ```
    public class MyThreadLocal {
@@ -64,7 +64,7 @@
    }
    ```
 
-   输出结果
+   ##### 输出结果
 
    ```
    0
@@ -73,7 +73,7 @@
    5
    ```
 
-   方法
+   ##### 方法
 
    ```java
     public T get() {
@@ -113,10 +113,12 @@
     } 
    ```
 
-3. ThreadLocalMap
+3. ### ThreadLocalMap
 
-   成员变量
+   ThreadlocalMap使用   ***线性探测***  解决hash冲突
 
+   ##### 成员变量
+   
    ```java
    
            static class Entry extends WeakReference<ThreadLocal<?>> {
@@ -147,11 +149,11 @@
            /**
             * The next size value at which to resize.
             */
-           private int threshold; // Default to 0
+        private int threshold; // Default to 0
    ```
 
-   构造函数
-
+   ##### 构造函数
+   
    ```java
     ThreadLocalMap(ThreadLocal<?> firstKey, Object firstValue) {
         		// 初始数组化大小
@@ -162,11 +164,11 @@
                size = 1;
                // 设置阙值  len * 2 / 3;
                setThreshold(INITIAL_CAPACITY);
-           }
+        }
    ```
 
-    方法
-
+   ##### get方法
+   
    ```java 
     private Entry getEntry(ThreadLocal<?> key) {
      			// 获取散列值
@@ -239,9 +241,196 @@
                }
            }
            return i;
+    }
+   ```
+   
+   ##### set方法
+   
+   ```java
+   private void set(ThreadLocal<?> key, Object value) {
+           ThreadLocal.ThreadLocalMap.Entry[] tab = table;
+           int len = tab.length;
+        	// 获取散列值
+           int i = key.threadLocalHashCode & (len-1);
+   		// 查询i之后entry
+           // tab[i]位置有数据处理
+           for (ThreadLocal.ThreadLocalMap.Entry e = tab[i]; e != null; e = tab[i = nextIndex(i, len)]) {
+               ThreadLocal<?> k = e.get();
+               if (k == key) {
+                   // 之前的key在值重新赋值
+                   e.value = value;
+                   return;
+               }
+   			// tab[i]位置没有ThreadLocal被使用了
+               if (k == null) {
+                   replaceStaleEntry(key, value, i);
+                   return;
+               }
+           }
+   		// 该位置设置最新entrty
+           tab[i] = new ThreadLocal.ThreadLocalMap.Entry(key, value);
+           int sz = ++size;
+           if (!cleanSomeSlots(i, sz) && sz >= threshold)
+               // 重新整理table
+               rehash();
+       }
+    private void replaceStaleEntry(ThreadLocal<?> key, Object value, int staleSlot) {
+           ThreadLocal.ThreadLocalMap.Entry[] tab = table;
+           int len = tab.length;
+           ThreadLocal.ThreadLocalMap.Entry e;
+           int slotToExpunge = staleSlot;
+           // staleSlot 之前位置的entrty
+           for (int i = prevIndex(staleSlot, len); (e = tab[i]) != null; i = prevIndex(i, len))
+               if (e.get() == null)
+                   slotToExpunge = i;
+   
+           // 重新设置
+           for (int i = nextIndex(staleSlot, len); (e = tab[i]) != null; i = nextIndex(i, len)) {
+               // 找见之前设置entry设置的位置
+               ThreadLocal<?> k = e.get();
+               if (k == key) {
+                   e.value = value;
+   
+                   tab[i] = tab[staleSlot];
+                   tab[staleSlot] = e;
+   
+                   // Start expunge at preceding stale entry if it exists
+                   if (slotToExpunge == staleSlot)
+                       slotToExpunge = i;
+                   // 清理无效数组数据
+                   cleanSomeSlots(expungeStaleEntry(slotToExpunge), len);
+                   return;
+               }
+               if (k == null && slotToExpunge == staleSlot)
+                   slotToExpunge = i;
+           }
+   
+           // If key not found, put new entry in stale slot
+           tab[staleSlot].value = null;
+           tab[staleSlot] = new ThreadLocal.ThreadLocalMap.Entry(key, value);
+   
+           // If there are any other stale entries in run, expunge them
+           if (slotToExpunge != staleSlot)
+               cleanSomeSlots(expungeStaleEntry(slotToExpunge), len);
+       }
+   
+      // 清理该tabl的数据
+       private int expungeStaleEntry(int staleSlot) {
+           ThreadLocal.ThreadLocalMap.Entry[] tab = table;
+           int len = tab.length;
+   
+           // expunge entry at staleSlot
+           tab[staleSlot].value = null;
+           tab[staleSlot] = null;
+           size--;
+   
+           // Rehash until we encounter null
+           ThreadLocal.ThreadLocalMap.Entry e;
+           int i;
+           // 清理taba[staleSlot]之后的数据
+           for (i = nextIndex(staleSlot, len); (e = tab[i]) != null; i = nextIndex(i, len)) {
+               ThreadLocal<?> k = e.get();
+               // tab[i]位置没有ThreadLocal被使用了
+               if (k == null) {
+                   e.value = null;
+                   tab[i] = null;
+                   size--;
+               } else {
+                   // 重新计算散列值存放到下一个位置
+                   int h = k.threadLocalHashCode & (len - 1);
+                   if (h != i) {
+                       tab[i] = null;
+   
+                       // Unlike Knuth 6.4 Algorithm R, we must scan until
+                       // null because multiple entries could have been stale.
+                       while (tab[h] != null)
+                           h = nextIndex(h, len);
+                       tab[h] = e;
+                   }
+               }
+           }
+           return i;
+       }
+    /**
+     * 清理部分数据 n = n/2 
+     */
+    private boolean cleanSomeSlots(int i, int n) {
+               boolean removed = false;
+               Entry[] tab = table;
+               int len = tab.length;
+               do {
+                   i = nextIndex(i, len);
+                   Entry e = tab[i];
+                   if (e != null && e.get() == null) {
+                       n = len;
+                       removed = true;
+                       i = expungeStaleEntry(i);
+                   }
+                  //n = n/2 
+               } while ( (n >>>= 1) != 0);
+               return removed;
+           }
+    /**
+     * 整理数组
+     */
+    private void rehash() {
+                // 清理全部数组
+               expungeStaleEntries();
+   
+               // Use lower threshold for doubling to avoid hysteresis
+               // 判断size的值是否大于阙值
+               if (size >= threshold - threshold / 4)
+                   // 扩容
+                   resize();
+           }
+   
+           /**
+            * Double the capacity of the table.
+            */
+           private void resize() {
+               Entry[] oldTab = table;
+               int oldLen = oldTab.length;
+               int newLen = oldLen * 2;
+               Entry[] newTab = new Entry[newLen];
+               int count = 0;
+               // 旧的位置拷贝到行新的位置
+               for (int j = 0; j < oldLen; ++j) {
+                   Entry e = oldTab[j];
+                   if (e != null) {
+                       ThreadLocal<?> k = e.get();
+                       if (k == null) {
+                           e.value = null; // Help the GC
+                       } else {
+                           int h = k.threadLocalHashCode & (newLen - 1);
+                           while (newTab[h] != null)
+                               h = nextIndex(h, newLen);
+                           newTab[h] = e;
+                           count++;
+                       }
+                   }
+               }
+   
+               setThreshold(newLen);
+               size = count;
+               table = newTab;
+           }
+   
+           /**
+            * Expunge all stale entries in the table.
+            * 全部清理数组
+            */
+           private void expungeStaleEntries() {
+               Entry[] tab = table;
+               int len = tab.length;
+               for (int j = 0; j < len; j++) {
+                   Entry e = tab[j];
+                   if (e != null && e.get() == null)
+                       expungeStaleEntry(j);
+               }
+           }
        }
    ```
-
+   
    
 
 
