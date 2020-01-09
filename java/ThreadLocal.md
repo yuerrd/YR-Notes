@@ -431,9 +431,24 @@
        }
    ```
    
+   ##### remove方法
    
-
-
-​      
+          ```java
+   private void remove(ThreadLocal<?> key) {
+               Entry[] tab = table;
+               int len = tab.length;
+               int i = key.threadLocalHashCode & (len-1);
+               // 查询I之后等于key的值并清理
+               for (Entry e = tab[i]; e != null;e = tab[i = nextIndex(i, len)]) {
+                   if (e.get() == key) {
+                       e.clear();
+                       expungeStaleEntry(i);
+                       return;
+                   }
+               }
+           }
+          ```
+   
+   
 
  
