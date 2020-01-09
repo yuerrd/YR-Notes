@@ -433,7 +433,7 @@
    
    ##### remove方法
    
-          ```java
+ ```java
    private void remove(ThreadLocal<?> key) {
                Entry[] tab = table;
                int len = tab.length;
@@ -447,4 +447,4 @@
                    }
                }
            }
-          ```
+ ```
