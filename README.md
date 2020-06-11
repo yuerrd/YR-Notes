@@ -6,4 +6,6 @@
 4. [Reactor三种线程模型](http://gee.cs.oswego.edu/dl/cpjslides/nio.pdf)
 5. [亚马逊Android-SDK](https://github.com/aws-amplify/aws-sdk-android) 
 6. [公共组件安装](./install/install.md)
+7. [金融级云原生架构](https://www.sofastack.tech/) 
+
 
