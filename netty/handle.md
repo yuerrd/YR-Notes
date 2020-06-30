@@ -5,7 +5,7 @@
 查看
 
 ```powershell
-Ulimit -n
+ulimit -n
 ```
 
 修改
