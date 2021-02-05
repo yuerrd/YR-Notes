@@ -49,6 +49,7 @@
    subjects:
      - kind: ServiceAccount
        name: prometheus-k8s
+       namespace: default
    ```
 
    **serviceAccount**
