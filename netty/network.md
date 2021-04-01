@@ -17,14 +17,14 @@ IPv4地址一共32位，四个字节
 #### 2. 单播,广播,组播
 -    单播： 一对一的通信
      ![unicast](../img/network/unicast.png)
+     
 -    广播： 一对所有的通信 
      ![broadcast](../img/network/broadcast.png)
+     
      eg: C类 192.168.11.0 子网络里 广播地址是192.168.11.255 
+     
 -    组播： 一对多的通信
      ![multicast](../img/network/multicast.png)
+     
      D类地址做组播组的群名，所有的主机都加入了同一个D类地址, D类地址是虚拟的并没有一个主机是这个IP地址
-
-#### 3. 
-
-#### 4. 
 
