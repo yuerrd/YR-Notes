@@ -1,0 +1,48 @@
+# Infinispan
+
+  ### 集群处理
+
+1. ##### 集群
+
+   ```java
+   INITIALIZING           // 初始化
+   REGULAR_MEMBER         // 普通成员
+   COORDINATOR            // 协调员
+   RECOVERING_CLUSTER     // 恢复集群
+   STOPPING               // 停止
+   ```
+
+   
+
+2. ##### 集群视图处理
+
+   - 更新集群状态
+
+   - 恢复集群状态 （恢复集群）
+
+     ```
+     // 1. 清除缓存状态
+     // 2. 设置重试次数
+     // 3. 获取集群状态
+     //// 3.1 
+     ```
+
+   - 更新缓存成员（协调员）
+
+3. #####   再次调整平衡状态
+
+   ```java
+   SUSPENDED      // 暂停
+   PENDING        // 等待
+   IN_PROGRESS    // 进行中
+   COMPLETE       // 已完成
+   ```
+
+   
+
+4. ##### 状态转移
+
+   
+
+5. ##### ConsistentHash
+
