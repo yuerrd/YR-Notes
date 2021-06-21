@@ -9,17 +9,17 @@
    
    ##安装
    yum install gcc
-make 
+   make 
    src 生成 *.sh
-make PREFIX=/some/other/directory
+   make PREFIX=/some/other/directory
    vi /etc/profile   PATH /some/other/directory
-   
+
    ##环境变量
-export REDIS_HOME =/some/other/directory
+   export REDIS_HOME =/some/other/directory
    export PATH=$PATH:$REDIS
-source /etc/profile
-   
-##生成service服务
+   source /etc/profile
+
+   ##生成service服务
    cd utils
    ./install_server.sh
    
@@ -253,8 +253,6 @@ source /etc/profile
       appendfsync everysec  每秒
       #appendfsync no      IO buffer 满了
       ```
-
-   5. 
 
 8. ####  集群搭建
 
