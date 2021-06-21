@@ -3,27 +3,27 @@
 1. ### 安装
 
    ```
-   ## 下载文件
+   ##下载文件
    wget https://github.com/redis/redis/archive/refs/tags/5.0.5.tar.gz
    tar xf 5.0.5.tar.gz
    
-   ## 安装
+   ##安装
    yum install gcc
 make 
    src 生成 *.sh
 make PREFIX=/some/other/directory
    vi /etc/profile   PATH /some/other/directory
    
-   ## 环境变量
+   ##环境变量
 export REDIS_HOME =/some/other/directory
    export PATH=$PATH:$REDIS
 source /etc/profile
    
-## 生成service服务
+##生成service服务
    cd utils
    ./install_server.sh
    
-   ## 服务启动脚本
+   ##服务启动脚本
    cd /etd/init.d 
    ```
 
@@ -50,10 +50,10 @@ source /etc/profile
       - bitmap
 
         ```
-        SETBIY   设置值
+        SETBIY            设置值
         BITCOUNT key 0,-1 统计值
-        BITPOS   查询第一次出现1/0的值
-        BITTOP   联合查询 and or xor not
+        BITPOS            查询第一次出现1/0的值
+        BITTOP            联合查询 and or xor not
         ```
 
    2. #### List
@@ -79,8 +79,8 @@ source /etc/profile
       - ##### 数组
 
         ```
-        INDEX  查询位置
-        LSET   设置位置
+        INDEX                 查询位置
+        LSET                  设置位置
         LREM key count VALUE  移除
         ```
 
@@ -100,12 +100,12 @@ source /etc/profile
         ```
           SADD key1 1 2 3 4
         	SADD key2 4 5 6 7
-        	SINTER  key1 key2 #交集 4
-        	SDIFF key1 key2 # 差异   1 2 3
-          SDIFF key2 key1 # 4 5 6	7
-          SUNION key1 key2 # 1 2 3 4 5 6 7 
-          SRANDMEMBER k1 5 # 1 2 3 4 
-          SRANDMEMBER k1 -5 # 2 3 4 3 3 随机事件
+        	SINTER  key1 key2  #交集 4
+        	SDIFF key1 key2    #差异   1 2 3
+          SDIFF key2 key1    #4 5 6	7
+          SUNION key1 key2   #1 2 3 4 5 6 7 
+          SRANDMEMBER k1 5   #1 2 3 4 
+          SRANDMEMBER k1 -5  #2 3 4 3 3 随机事件
           SPOP 取出一个
         ```
       
@@ -115,23 +115,24 @@ source /etc/profile
 
         ```
         	ZADD key1 score1 x score2 xx 
-        	ZSCORE key1 # 分值
-        	ZRANG key1  # 从小到大
-        	ZREVRANGE key # 从大到小
-          ZINCRBY key1 score1 x #修改分数
+        	ZSCORE key1            #分值
+        	ZRANG key1             #从小到大
+        	ZREVRANGE key          #从大到小
+          ZINCRBY key1 score1 x  #修改分数
         ```
+        
+        
         
       - ##### 集合操作
       
         ```
-                              #权重         聚合函数
+                              权重         聚合函数
         ZUNIONSTORE key1 key2 WEIGHTS 1 0.5 SUM|MIN|MAX
         ```
       
       - #####  skip list
       
         ```
-        
         1 - - - 5 - - - 9
         |               |
         1 - 3 - 5 - 7 - 9
@@ -167,8 +168,8 @@ source /etc/profile
    布隆过滤器官网地址： https://github.com/RedisBloom/RedisBloom
 
    ```
-   # redis.conft添加模块
-   loadmodule /opt/redis5/RedisBloom-2.2.5/redisbloom.so # 加载模块
+   #redis.conft添加模块
+   loadmodule /opt/redis5/RedisBloom-2.2.5/redisbloom.so #加载模块
    BF.ADD k1 test
    (integer) 1
    BF.EXISTS k1 test
@@ -239,8 +240,8 @@ source /etc/profile
       4.0 以前 重写  合并重复的命令 
       4.0 以后 重写  先保存rdb格式数据，在写增量的数据aof文件
       
-      auto-aof-rewrite-percentage 100%  #
-      auto-aof-rewrite-min-size 64mb    # 达到64MB重写 记录上次BGREWRITEAOF后的大小
+      auto-aof-rewrite-percentage 100%  
+      auto-aof-rewrite-min-size 64mb    #达到64MB重写 记录上次BGREWRITEAOF后的大小
       ```
 
    4. 配置
@@ -248,9 +249,9 @@ source /etc/profile
       ```
       appendonly yes #开启AOF文件
       触发规则 写的buffer 触发flush
-      # appendfsync always  每次
+      #appendfsync always  每次
       appendfsync everysec  每秒
-      # appendfsync no      IO buffer 满了
+      #appendfsync no      IO buffer 满了
       ```
 
    5. 
@@ -258,11 +259,11 @@ source /etc/profile
 8. ####  集群搭建
 
    ```
-    ### 主从
-    REPLICAOF ip port                        # 设置从节点命令
-    replicaof <masterip> <masterport>        # 配置
-    REPLICAOF no one                         # 自己变成主 
-    redis-server ./sentinel.conf --sentinel  # 启动sentinel 
+    ###主从
+    REPLICAOF ip port                        #设置从节点命令
+    replicaof <masterip> <masterport>        #配置
+    REPLICAOF no one                         #自己变成主 
+    redis-server ./sentinel.conf --sentinel  #启动sentinel 
    ```
 
    sentinel 配置文件详情：https://redis.io/topics/sentinel
@@ -272,7 +273,7 @@ source /etc/profile
    redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 \
    --cluster-replicas 1
    
-   ### 配置
+   ###配置
    https://redis.io/topics/cluster-tutorial
    cluster-enabled yes
    ```
