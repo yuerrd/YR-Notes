@@ -1,0 +1,58 @@
+version: '3'
+services:
+  mongodb-primary:
+    image: mongo:latest
+    container_name: "mongodb-primary"
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=123456
+    volumes:
+      - "/opt/docker/mongodb/data/db:/data/db"
+      - "/opt/docker/mongodb/data/mongo-entrypoint/:/docker-entrypoint-initdb.d/"
+      - "/opt/docker/mongodb/conf:/opt/keyfile"
+    extra_hosts:
+      - "mongodb-primary:192.168.201.4"
+      - "mongodb-secondary:192.168.201.5"
+      - "mongodb-arbiter:192.168.201.6"
+    command: mongod --replSet rs0 --smallfiles --oplogSize 128  --auth --keyFile /opt/keyfile/mongodb-keyfile
+      
+  mongodb-secondary:
+    image: mongo:latest
+    container_name: "mongodb-secondary"
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=123456
+    volumes:
+      - "/opt/docker/mongodb/data/db:/data/db"
+      - "/opt/docker/mongodb/data/mongo-entrypoint/:/docker-entrypoint-initdb.d/"
+      - "/opt/docker/mongodb/conf:/opt/keyfile"
+    extra_hosts:
+      - "mongodb-primary:192.168.201.4"
+      - "mongodb-secondary:192.168.201.5"
+      - "mongodb-arbiter:192.168.201.6"
+    command: mongod --replSet rs0 --smallfiles --oplogSize 128 --auth --keyFile /opt/keyfile/mongodb-keyfile
+ 
+  mongodb-arbiter:
+    image: mongo:latest
+    container_name: "mongodb-arbiter"
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=123456
+    volumes:
+      - "/opt/docker/mongodb/data/db:/data/db"
+      - "/opt/docker/mongodb/data/mongo-entrypoint/:/docker-entrypoint-initdb.d/"
+      - "/opt/docker/mongodb/conf:/opt/keyfile"
+    extra_hosts:
+      - "mongodb-primary:192.168.201.4"
+      - "mongodb-secondary:192.168.201.5"
+      - "mongodb-arbiter:192.168.201.6"
+    command: mongod --replSet rs0 --smallfiles --oplogSize 128 --auth --keyFile /opt/keyfile/mongodb-keyfile
