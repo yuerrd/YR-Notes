@@ -37,6 +37,7 @@
 
 2. ### LVS
    ![lvs](../img/lvs.png)
+   
    - #### NAT
 
      基于三层协议
@@ -44,53 +45,57 @@
    - #### DR
 
      基于二层协议
-     ![dr](../img/dr.png)
-     node1 192.168.0.107
-     node2 192.168.0.108
-     node3 192.168.0.109
-     node4 192.168.0.110
-     隐藏IP 192.168.0.100
-   
      
-   
+     ![dr](../img/dr.png)
+     
+     node1 192.168.0.107
+     
+     node2 192.168.0.108
+     
+     node3 192.168.0.109
+     
+     node4 192.168.0.110
+     
+     隐藏IP 192.168.0.100
+     
      内核配置
-   
-     ```
-    /proc/sys/net/ipv4/conf/eth0
-     #arp_ignore   ARP 查询响应
-    0 只要本机有此mac地址的网卡，就给予回应。
-     1 只有请求的mac地址是自己的网卡，才给予回应。
-     #arp_announce 启动通告
-     0 发现本机有请求的mac，就会响应
-     1 响应匹配的的地址
-     2 只响应自己请求的mac地址
-     ```
+
+        ```
+        #/proc/sys/net/ipv4/conf/eth0
+        # arp_ignore   ARP 查询响应
+           0 只要本机有此mac地址的网卡，就给予回应。
+           1 只有请求的mac地址是自己的网卡，才给予回应。
+        # arp_announce 启动通告
+           0 发现本机有请求的mac，就会响应
+           1 响应匹配的的地址
+           2 只响应自己请求的mac地址
+        ```
    
      配置
 
      ```shell
-    node2 ,node3
+     node2 ,node3
      echo 1 > /proc/sys/net/ipv4/conf/all/arp_ignore
-    echo 2 > /proc/sys/net/ipv4/conf/all/arp_announce
+     echo 2 > /proc/sys/net/ipv4/conf/all/arp_announce
      echo 1 > /proc/sys/net/ipv4/conf/eth0/arp_ignore
-    echo 2 > /proc/sys/net/ipv4/conf/eth0/arp_announce
+     echo 2 > /proc/sys/net/ipv4/conf/eth0/arp_announce
+     # node1 
+     ifconfig eth0:1 192.168.0.100/24
+     # node2 
+     ifconfig lo:1 192.168.0.100 netmast 255.255.255.255
+     # node3 
+     ifconfig lo:1 192.168.0.100 netmask 255.255.255.255
      
-     ```
-
-  node1 ifconfig eth0:1 192.168.0.100/24
-     node2 ifconfig lo:1 192.168.0.100 netmast 255.255.255.255
-     node3 ifconfig lo:1 192.168.0.100 netmask 255.255.255.255
-     
-  #node1 ipvsadm
+     #node1 ipvsadm
      yum install ipvsadm -y
-  # 入包规则
+     # 入包规则
      ipvsadm -A -t 192.168.0.100:80 -s rr 
      # 出包规则
      ipvsadm -a -t 192.168.0.100:80 -r 192.168.0.108 -g -w 1
      ipvsadm -a -t 192.168.0.100:80 -r 192.168.0.109 -g -w 1
-  #node1 keepalived
+     #node1 keepalived
      yum install keepalived -y
-  # 配置地址/etc/keepalived/keepalived.conf
+     # 配置地址/etc/keepalived/keepalived.conf
      vrrp_instance VI_1 {
       state MASTER # BACKUP
          interface eth0
