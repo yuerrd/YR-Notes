@@ -98,15 +98,15 @@
       - ##### 交集，并集 ,差集
 
         ```
-          SADD key1 1 2 3 4
-        	SADD key2 4 5 6 7
-        	SINTER  key1 key2  #交集 4
-        	SDIFF key1 key2    #差异   1 2 3
-          SDIFF key2 key1    #4 5 6	7
-          SUNION key1 key2   #1 2 3 4 5 6 7 
-          SRANDMEMBER k1 5   #1 2 3 4 
-          SRANDMEMBER k1 -5  #2 3 4 3 3 随机事件
-          SPOP 取出一个
+        SADD key1 1 2 3 4
+        SADD key2 4 5 6 7
+        SINTER  key1 key2  #交集 4
+        SDIFF key1 key2    #差异   1 2 3
+        SDIFF key2 key1    #4 5 6	7
+        SUNION key1 key2   #1 2 3 4 5 6 7 
+        SRANDMEMBER k1 5   #1 2 3 4 
+        SRANDMEMBER k1 -5  #2 3 4 3 3 随机事件
+        SPOP 取出一个
         ```
       
    5. ##### Sorted set
@@ -114,11 +114,11 @@
       - ##### 排序
 
         ```
-        	ZADD key1 score1 x score2 xx 
-        	ZSCORE key1            #分值
-        	ZRANG key1             #从小到大
-        	ZREVRANGE key          #从大到小
-          ZINCRBY key1 score1 x  #修改分数
+        ZADD key1 score1 x score2 xx 
+        ZSCORE key1            #分值
+        ZRANG key1             #从小到大
+        ZREVRANGE key          #从大到小
+        INCRBY key1 score1 x  #修改分数
         ```
         
         
