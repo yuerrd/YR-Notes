@@ -24,7 +24,7 @@
    ./install_server.sh
    
    ##服务启动脚本
-   cd /etd/init.d 
+   cd /et/init.d 
    ```
 
    
