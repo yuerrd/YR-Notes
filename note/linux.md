@@ -5,29 +5,26 @@
    - 门电路
 
    ​     非门:   $$Y=\overline{A}$$ 
-
+   
    ​     与门：$$ Y=A *B$$ 
-
+   
    ​     异或门：$$A \bigoplus B = (\overline{A} *B)+ (A *\overline {B})$$ 
 
-
    - 寄存器
-
      1. D触发器
 
         input(输入端) clock(时钟) output(输出端)
 
 2. ###  命令
 
-   ```
+   ```shell
    lsof
-   pcstat 缓存使用情况
-   starce --ff -o out 系统调用命令日志
+   pcstat #缓存使用情况
    ```
-
+   
 3. ### 句柄
 
-   #### 局部文件句柄限制
+   ##### 局部文件句柄限制
 
    查看
 
@@ -47,7 +44,7 @@
    *   soft nofile 102400 
    ```
 
-   #### 全局文件句柄限制
+   ##### 全局文件句柄限制
 
    查看
 
@@ -69,7 +66,7 @@
    sudo sysctl -p
    ```
 
-   #### TCP释放时间，减小，调低time_wait状态端口等待时间
+   ##### TCP释放时间，减小，调低time_wait状态端口等待时间
 
    ```powershell
    # 调低端口释放后的等待时间，默认为60s，修改为15~30s
@@ -85,7 +82,7 @@
    net.ipv4.ip_local_port_range = 10000     65000     
    ```
 
-   #### 安装iptalbes会使用nf_conntrack模块跟踪连接
+   ##### 安装iptalbes会使用nf_conntrack模块跟踪连接
 
    跟踪的连接超过这个最大值，就会导致连接失败
 
@@ -100,6 +97,5 @@
    sysctl -w net.nf_conntrack_max=2000500
    ```
 
-   
+4. ### 进程 、线程 、纤程
 
-4. 
